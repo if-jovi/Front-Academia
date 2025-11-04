@@ -1,16 +1,17 @@
 const routes = [
+ 
+  { path: '/', component: () => import('pages/LoginPage.vue') },
+
   {
-    path: '/',
+    path: '/app',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+    children: [
+      { path: '', redirect: '/app/dashboard' }, // Redireciona para o caminho completo
+      { path: 'dashboard', name: 'dashboard', component: () => import('pages/DashboardPage.vue') }
+    ]
   },
 
-  // Always leave this as last one,
-  // but you can also remove it
-  {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
-  },
-]
+  { path: '/:catchAll(.*)*', component: () => import('pages/ErrorNotFound.vue') }
+  ]
 
-export default routes
+  export default routes
