@@ -1,0 +1,80 @@
+{
+  "treinos": {
+    "agendados": {
+      "segunda": 15,
+      "terca": 22,
+      "quarta": 18,
+      "quinta": 25,
+      "sexta": 20,
+      "sabado": 12,
+      "domingo": 8
+    },
+    "realizados": {
+      "segunda": 12,
+      "terca": 18,
+      "quarta": 15,
+      "quinta": 20,
+      "sexta": 18,
+      "sabado": 10,
+      "domingo": 5
+    }
+  },
+  "equipamentos": {
+    "total": 45,
+    "status": {
+      "ativos": 32,
+      "manutencao": 8,
+      "reservados": 5
+    },
+    "manutencoes": [
+      {
+        "id": 1,
+        "equipamento": "Esteira 01",
+        "dataInicio": "2025-11-01",
+        "previsao": "2025-11-10",
+        "tipo": "Preventiva"
+      },
+      {
+        "id": 2,
+        "equipamento": "Leg Press",
+        "dataInicio": "2025-11-03",
+        "previsao": "2025-11-05",
+        "tipo": "Corretiva"
+      }
+    ]
+  },
+  "alunos": {
+    "total": 1,
+    "ativos": 1,
+    "novos": {
+      "2025-11": 1
+    }
+  },
+  "frequencia": {
+    "horarios": {
+      "06:00": 15,
+      "08:00": 35,
+      "10:00": 25,
+      "12:00": 30,
+      "14:00": 22,
+      "16:00": 28,
+      "18:00": 45,
+      "20:00": 40,
+      "22:00": 20
+    }
+  },
+  "instrutores": [
+    {
+      "id": 1,
+      "nome": "João Silva",
+      "especialidade": "Musculação",
+      "alunosAtivos": 45
+    },
+    {
+      "id": 2,
+      "nome": "Maria Santos",
+      "especialidade": "Funcional",
+      "alunosAtivos": 38
+    }
+  ]
+}
