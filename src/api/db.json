@@ -1,80 +1,261 @@
 {
-  "treinos": {
-    "agendados": {
-      "segunda": 15,
-      "terca": 22,
-      "quarta": 18,
-      "quinta": 25,
-      "sexta": 20,
-      "sabado": 12,
-      "domingo": 8
-    },
-    "realizados": {
-      "segunda": 12,
-      "terca": 18,
-      "quarta": 15,
-      "quinta": 20,
-      "sexta": 18,
-      "sabado": 10,
-      "domingo": 5
-    }
-  },
-  "equipamentos": {
-    "total": 45,
-    "status": {
-      "ativos": 32,
-      "manutencao": 8,
-      "reservados": 5
-    },
-    "manutencoes": [
-      {
-        "id": 1,
-        "equipamento": "Esteira 01",
-        "dataInicio": "2025-11-01",
-        "previsao": "2025-11-10",
-        "tipo": "Preventiva"
-      },
-      {
-        "id": 2,
-        "equipamento": "Leg Press",
-        "dataInicio": "2025-11-03",
-        "previsao": "2025-11-05",
-        "tipo": "Corretiva"
-      }
-    ]
-  },
-  "alunos": {
-    "total": 1,
-    "ativos": 1,
-    "novos": {
-      "2025-11": 1
-    }
-  },
-  "frequencia": {
-    "horarios": {
-      "06:00": 15,
-      "08:00": 35,
-      "10:00": 25,
-      "12:00": 30,
-      "14:00": 22,
-      "16:00": 28,
-      "18:00": 45,
-      "20:00": 40,
-      "22:00": 20
-    }
-  },
-  "instrutores": [
+  "alunos": [
     {
       "id": 1,
+      "data_inicio": "2024-01-15",
+      "objetivo": "Perda de peso e ganho de resistência",
+      "cpf_cnpj": "123.456.789-00",
       "nome": "João Silva",
-      "especialidade": "Musculação",
-      "alunosAtivos": 45
+      "endereco": "Rua das Flores, 123 - São Paulo/SP",
+      "telefone": "(11) 99999-9999",
+      "data_nascimento": "1990-05-15"
     },
     {
       "id": 2,
+      "data_inicio": "2024-01-10",
+      "objetivo": "Ganho de massa muscular",
+      "cpf_cnpj": "987.654.321-00",
       "nome": "Maria Santos",
-      "especialidade": "Funcional",
-      "alunosAtivos": 38
+      "endereco": "Av. Paulista, 456 - São Paulo/SP",
+      "telefone": "(11) 88888-8888",
+      "data_nascimento": "1985-03-20"
+    },
+    {
+      "id": 3,
+      "data_inicio": "2024-02-01",
+      "objetivo": "Condicionamento físico geral",
+      "cpf_cnpj": "456.789.123-00",
+      "nome": "Pedro Oliveira",
+      "endereco": "Rua Verde, 789 - São Paulo/SP",
+      "telefone": "(11) 77777-7777",
+      "data_nascimento": "1992-08-12"
+    },
+    {
+      "id": 4,
+      "data_inicio": "2024-01-20",
+      "objetivo": "Reabilitação pós-lesão",
+      "cpf_cnpj": "321.654.987-00",
+      "nome": "Ana Costa",
+      "endereco": "Rua Azul, 321 - São Paulo/SP",
+      "telefone": "(11) 66666-6666",
+      "data_nascimento": "1988-11-25"
+    },
+    {
+      "id": 5,
+      "data_inicio": "2024-02-15",
+      "objetivo": "Preparação para competição",
+      "cpf_cnpj": "654.321.987-00",
+      "nome": "Carlos Ferreira",
+      "endereco": "Av. Brasil, 654 - São Paulo/SP",
+      "telefone": "(11) 55555-5555",
+      "data_nascimento": "1995-04-08"
+    },
+    {
+      "nome": "joao vitor adwa",
+      "email": "jovimart09@gmail.com",
+      "telefone": "(49) 98899-4327",
+      "dataNascimento": "2004-06-05",
+      "plano": "Básico",
+      "status": "Ativo",
+      "id": 6,
+      "dataCadastro": "2025-11-13"
     }
-  ]
+  ],
+  "maquinas": [
+    {
+      "id_maquina": 1,
+      "tipo_maquina": "Cardio",
+      "nome_maquina": "Esteira Elétrica",
+      "em_manutencao": false
+    },
+    {
+      "id_maquina": 2,
+      "tipo_maquina": "Cardio",
+      "nome_maquina": "Bicicleta Ergométrica",
+      "em_manutencao": false
+    },
+    {
+      "id_maquina": 3,
+      "tipo_maquina": "Musculação",
+      "nome_maquina": "Máquina de Musculação",
+      "em_manutencao": true
+    },
+    {
+      "id_maquina": 4,
+      "tipo_maquina": "Cardio",
+      "nome_maquina": "Elíptico",
+      "em_manutencao": false
+    },
+    {
+      "id_maquina": 5,
+      "tipo_maquina": "Musculação",
+      "nome_maquina": "Leg Press",
+      "em_manutencao": false
+    }
+  ],
+  "treinos": [
+    {
+      "id_treino": 1,
+      "id_aluno": 1,
+      "nome_treino": "Treino de Força - Superior",
+      "observacoes": "Foco em desenvolvimento de força muscular",
+      "data_treino": "2024-01-15",
+      "data_inicio": "08:00:00",
+      "data_fim": "09:00:00"
+    },
+    {
+      "id_treino": 2,
+      "id_aluno": 2,
+      "nome_treino": "Treino Cardio",
+      "observacoes": "Melhoria da resistência cardiovascular",
+      "data_treino": "2024-01-16",
+      "data_inicio": "07:30:00",
+      "data_fim": "08:15:00"
+    },
+    {
+      "id_treino": 3,
+      "id_aluno": 1,
+      "nome_treino": "Treino de Pernas",
+      "observacoes": "Foco em membros inferiores",
+      "data_treino": "2024-01-17",
+      "data_inicio": "09:00:00",
+      "data_fim": "10:00:00"
+    }
+  ],
+  "treinosDashboard": {
+    "agendados": {
+      "seg": 12,
+      "ter": 15,
+      "qua": 18,
+      "qui": 14,
+      "sex": 20,
+      "sab": 8,
+      "dom": 5
+    },
+    "realizados": {
+      "seg": 10,
+      "ter": 13,
+      "qua": 16,
+      "qui": 12,
+      "sex": 18,
+      "sab": 7,
+      "dom": 4
+    }
+  },
+  "exercicios": [
+    {
+      "id_exercicio": 1,
+      "id_maquina": 3,
+      "grupo_muscular": "Peito",
+      "equipamento_necessario": "Banco de supino, barra ou halteres"
+    },
+    {
+      "id_exercicio": 2,
+      "id_maquina": 5,
+      "grupo_muscular": "Pernas",
+      "equipamento_necessario": "Máquina de leg press"
+    },
+    {
+      "id_exercicio": 3,
+      "id_maquina": 1,
+      "grupo_muscular": "Cardio",
+      "equipamento_necessario": "Esteira elétrica"
+    },
+    {
+      "id_exercicio": 4,
+      "id_maquina": 2,
+      "grupo_muscular": "Cardio",
+      "equipamento_necessario": "Bicicleta ergométrica"
+    }
+  ],
+  "treinos_exercicios": [
+    {
+      "id_treino_exercicio": 1,
+      "id_exercicio": 1,
+      "id_treino": 1,
+      "series": 4,
+      "repeticoes": 12,
+      "carga_kg": 60,
+      "descanso_segundos": 90
+    },
+    {
+      "id_treino_exercicio": 2,
+      "id_exercicio": 2,
+      "id_treino": 1,
+      "series": 3,
+      "repeticoes": 15,
+      "carga_kg": 80,
+      "descanso_segundos": 120
+    },
+    {
+      "id_treino_exercicio": 3,
+      "id_exercicio": 3,
+      "id_treino": 2,
+      "series": 1,
+      "repeticoes": 30,
+      "carga_kg": 0,
+      "descanso_segundos": 60
+    },
+    {
+      "id_treino_exercicio": 4,
+      "id_exercicio": 4,
+      "id_treino": 2,
+      "series": 1,
+      "repeticoes": 20,
+      "carga_kg": 0,
+      "descanso_segundos": 60
+    }
+  ],
+  "relatorios": [
+    {
+      "id": 1,
+      "titulo": "Relatório Mensal de Alunos",
+      "tipo": "Alunos",
+      "periodo": "Janeiro 2024",
+      "conteudo": "Análise do desempenho dos alunos no mês",
+      "status": "Ativo",
+      "dataCriacao": "2024-02-01"
+    },
+    {
+      "id": 2,
+      "titulo": "Relatório de Manutenção",
+      "tipo": "Equipamentos",
+      "periodo": "Janeiro 2024",
+      "conteudo": "Relatório de manutenção preventiva dos equipamentos",
+      "status": "Ativo",
+      "dataCriacao": "2024-02-05"
+    }
+  ],
+  "equipamentos": {
+    "status": {
+      "ativas": 3,
+      "manutencao": 1,
+      "reservadas": 1
+    }
+  },
+  "alunosdash": {
+    "total": 5,
+    "ativos": 4,
+    "novos": {
+      "2024-01": 2,
+      "2024-02": 3,
+      "2024-03": 0,
+      "2024-04": 0,
+      "2024-05": 0,
+      "2024-06": 0
+    }
+  },
+  "frequenciadash": {
+    "horarios": {
+      "6h": 2,
+      "8h": 5,
+      "10h": 8,
+      "12h": 12,
+      "14h": 15,
+      "16h": 18,
+      "18h": 20,
+      "20h": 16,
+      "22h": 4
+    }
+  }
 }

@@ -1,45 +1,97 @@
 <template>
-  <q-page padding>
-    <div class="text-h5 q-mb-md">Dashboard</div>
+  <q-page class="q-pa-md bg-grey-1" style="min-height: 100vh;">
+    <div class="row justify-center">
+      <div class="col-12 col-xl-10">
+        <div class="q-mb-lg">
+          <div class="row items-center q-mb-md">
+            <div class="col">
+              <h4 class="text-h4 q-my-none text-weight-bold text-primary">
+                <q-icon name="dashboard" class="q-mr-sm" />
+                Dashboard da Academia
+              </h4>
+              <p class="text-grey-7 q-mt-sm">Visão geral do desempenho e estatísticas</p>
+            </div>
+            <div class="col-auto">
+              <q-btn
+                color="primary"
+                icon="refresh"
+                label="Atualizar"
+                @click="loadAllData"
+                :loading="loading"
+                unelevated
+                class="q-px-lg"
+                size="md"
+              />
+            </div>
+          </div>
+        </div>
 
-    <!-- Cards com informações principais -->
-    <div class="row q-col-gutter-md q-mb-lg">
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="bg-primary text-white">
-          <q-card-section>
-            <div class="text-subtitle2">Total de Alunos</div>
-            <div class="text-h4">{{ cardData.totalAlunos }}</div>
-          </q-card-section>
-        </q-card>
-      </div>
+        <!-- Cards com informações principais -->
+        <div class="row q-col-gutter-md q-mb-lg">
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-card class="stat-card bg-gradient-primary text-white">
+              <q-card-section>
+                <div class="row items-center">
+                  <div class="col">
+                    <div class="text-h6">{{ cardData.totalAlunos }}</div>
+                    <div class="text-caption">Total de Alunos</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="people" size="2rem" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="bg-secondary text-white">
-          <q-card-section>
-            <div class="text-subtitle2">Ativos Hoje</div>
-            <div class="text-h4">{{ cardData.alunosAtivos }}</div>
-          </q-card-section>
-        </q-card>
-      </div>
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-card class="stat-card bg-gradient-success text-white">
+              <q-card-section>
+                <div class="row items-center">
+                  <div class="col">
+                    <div class="text-h6">{{ cardData.alunosAtivos }}</div>
+                    <div class="text-caption">Ativos Hoje</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="person_add" size="2rem" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="bg-accent text-white">
-          <q-card-section>
-            <div class="text-subtitle2">Aulas Hoje</div>
-            <div class="text-h4">{{ cardData.aulasHoje }}</div>
-          </q-card-section>
-        </q-card>
-      </div>
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-card class="stat-card bg-gradient-warning text-white">
+              <q-card-section>
+                <div class="row items-center">
+                  <div class="col">
+                    <div class="text-h6">{{ cardData.aulasHoje }}</div>
+                    <div class="text-caption">Aulas Hoje</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="event" size="2rem" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="bg-positive text-white">
-          <q-card-section>
-            <div class="text-subtitle2">Novos este mês</div>
-            <div class="text-h4">{{ cardData.novosNoMes }}</div>
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-card class="stat-card bg-gradient-info text-white">
+              <q-card-section>
+                <div class="row items-center">
+                  <div class="col">
+                    <div class="text-h6">{{ cardData.novosNoMes }}</div>
+                    <div class="text-caption">Novos este mês</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="trending_up" size="2rem" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
 
     <!-- Gráficos -->
     <div class="row q-col-gutter-md">
@@ -131,6 +183,8 @@
             }
           }"
         />
+      </div>
+    </div>
       </div>
     </div>
   </q-page>
@@ -249,24 +303,25 @@ async function loadEquipamentosData() {
 async function loadAlunosData() {
   try {
     const { data } = await apiService.getAlunos()
-    
+
     // Atualiza os cards
     cardData.value = {
-      totalAlunos: data.total,
-      alunosAtivos: data.ativos,
-      aulasHoje: Object.values(data.novos).pop() || 0,
-      novosNoMes: Object.values(data.novos).pop() || 0
+      totalAlunos: data.total || 0,
+      alunosAtivos: data.ativos || 0,
+      aulasHoje: 8, // Valor fixo para demonstração
+      novosNoMes: Object.values(data.novos || {}).pop() || 0
     }
-    
+
     // Atualiza o gráfico
-    monthlyLabels.value = Object.keys(data.novos).map(date => {
+    const novosKeys = Object.keys(data.novos || {})
+    monthlyLabels.value = novosKeys.map(date => {
       const [year, month] = date.split('-')
       return new Date(year, month - 1).toLocaleString('pt-BR', { month: 'short' })
     })
-    
+
     monthlyDatasets.value = [{
       label: 'Novos Alunos',
-      data: Object.values(data.novos),
+      data: Object.values(data.novos || {}),
       backgroundColor: '#42A5F5'
     }]
   } catch (error) {
@@ -339,4 +394,30 @@ onMounted(() => {
 <style scoped>
 .q-card { height: 100%; }
 .chart-card { height: 100%; }
+
+.stat-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #1976D2, #42A5F5);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, #4CAF50, #81C784);
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(135deg, #FF9800, #FFB74D);
+}
+
+.bg-gradient-info {
+  background: linear-gradient(135deg, #2196F3, #64B5F6);
+}
 </style>

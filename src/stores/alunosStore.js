@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import services from '../api/services'
+import alunosService from '../api/alunosService'
 
-export const useStudentsStore = defineStore('students', () => {
+export const useAlunosStore = defineStore('alunos', () => {
   const alunos = ref([])
   const carregando = ref(false)
   const erro = ref(null)
@@ -16,11 +16,12 @@ export const useStudentsStore = defineStore('students', () => {
     carregando.value = true
     erro.value = null
     try {
-      const response = await services.getListaAlunos()
-      alunos.value = response.data.lista
+      const response = await alunosService.getListaAlunos()
+      alunos.value = response.data
     } catch (error) {
       erro.value = 'Erro ao buscar alunos'
       console.error('Erro ao buscar alunos:', error)
+      alunos.value = []
     } finally {
       carregando.value = false
     }
@@ -30,7 +31,7 @@ export const useStudentsStore = defineStore('students', () => {
     carregando.value = true
     erro.value = null
     try {
-      const response = await services.getAluno(id)
+      const response = await alunosService.getAluno(id)
       return response.data
     } catch (error) {
       erro.value = 'Erro ao buscar aluno'
@@ -45,11 +46,15 @@ export const useStudentsStore = defineStore('students', () => {
     carregando.value = true
     erro.value = null
     try {
-      const response = await services.adicionarAluno(aluno)
+      const response = await alunosService.adicionarAluno(aluno)
       alunos.value.push(response.data)
       return response.data
     } catch (error) {
-      erro.value = 'Erro ao adicionar aluno'
+      const errorMessage = error.response?.data?.message ||
+                          error.response?.data?.error ||
+                          error.message ||
+                          'Erro ao adicionar aluno'
+      erro.value = errorMessage
       console.error('Erro ao adicionar aluno:', error)
       throw error
     } finally {
@@ -61,7 +66,7 @@ export const useStudentsStore = defineStore('students', () => {
     carregando.value = true
     erro.value = null
     try {
-      const response = await services.atualizarAluno(id, alunoAtualizado)
+      const response = await alunosService.atualizarAluno(id, alunoAtualizado)
       const index = alunos.value.findIndex(aluno => aluno.id === id)
       if (index !== -1) {
         alunos.value[index] = response.data
@@ -80,7 +85,7 @@ export const useStudentsStore = defineStore('students', () => {
     carregando.value = true
     erro.value = null
     try {
-      await services.deletarAluno(id)
+      await alunosService.deletarAluno(id)
       alunos.value = alunos.value.filter(aluno => aluno.id !== id)
     } catch (error) {
       erro.value = 'Erro ao deletar aluno'

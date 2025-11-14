@@ -86,66 +86,79 @@
   </div>
 </template>
 
-<script setup>
+<script>
 import { ref, reactive } from 'vue'
-import { useStudentsStore } from '../stores/students'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
+import alunosService from '../api/alunosService'
 
-const $q = useQuasar()
-const router = useRouter()
-const studentsStore = useStudentsStore()
+export default {
+  name: 'AlunosAdd',
+  setup() {
+    const $q = useQuasar()
+    const router = useRouter()
 
-const carregando = ref(false)
+    const carregando = ref(false)
 
-const aluno = reactive({
-  nome: '',
-  email: '',
-  telefone: '',
-  dataNascimento: '',
-  plano: '',
-  status: 'Ativo'
-})
+    const aluno = reactive({
+      nome: '',
+      email: '',
+      telefone: '',
+      dataNascimento: '',
+      plano: '',
+      status: 'Ativo'
+    })
 
-const opcoesPlano = [
-  'Básico',
-  'Premium',
-  'VIP'
-]
+    const opcoesPlano = [
+      'Básico',
+      'Premium',
+      'VIP'
+    ]
 
-const opcoesStatus = [
-  'Ativo',
-  'Inativo'
-]
+    const opcoesStatus = [
+      'Ativo',
+      'Inativo'
+    ]
 
-async function salvarAluno() {
-  carregando.value = true
-  try {
-    // Gerar ID único
-    const novoId = Date.now()
-    const alunoParaSalvar = {
-      ...aluno,
-      id: novoId,
-      dataCadastro: new Date().toISOString().split('T')[0]
+    async function salvarAluno() {
+      carregando.value = true
+      try {
+        // Gerar ID único
+        const novoId = Date.now()
+        const alunoParaSalvar = {
+          ...aluno,
+          id: novoId,
+          dataCadastro: new Date().toISOString().split('T')[0]
+        }
+
+        await alunosService.adicionarAluno(alunoParaSalvar)
+
+        $q.notify({
+          color: 'positive',
+          message: 'Aluno adicionado com sucesso',
+          icon: 'check'
+        })
+
+        router.push('/app/alunos')
+      } catch (error) {
+        console.error('Erro ao salvar aluno na página:', error)
+        $q.notify({
+          color: 'negative',
+          message: 'Erro ao adicionar aluno',
+          icon: 'report_problem'
+        })
+      } finally {
+        carregando.value = false
+      }
     }
 
-    await studentsStore.adicionarAluno(alunoParaSalvar)
-
-    $q.notify({
-      color: 'positive',
-      message: 'Aluno adicionado com sucesso',
-      icon: 'check'
-    })
-
-    router.push('/app/alunos')
-  } catch {
-    $q.notify({
-      color: 'negative',
-      message: 'Erro ao adicionar aluno',
-      icon: 'report_problem'
-    })
-  } finally {
-    carregando.value = false
+    return {
+      carregando,
+      aluno,
+      opcoesPlano,
+      opcoesStatus,
+      salvarAluno
+    }
   }
 }
 </script>

@@ -91,86 +91,100 @@
   </div>
 </template>
 
-<script setup>
+<script>
 import { ref, onMounted } from 'vue'
-import { useStudentsStore } from '../stores/students'
 import { useQuasar } from 'quasar'
 import { useRouter, useRoute } from 'vue-router'
+import alunosService from '../api/alunosService'
 
-const $q = useQuasar()
-const router = useRouter()
-const route = useRoute()
-const studentsStore = useStudentsStore()
+export default {
+  name: 'AlunosEdit',
+  setup() {
+    const $q = useQuasar()
+    const router = useRouter()
+    const route = useRoute()
 
-const carregando = ref(false)
-const aluno = ref(null)
+    const carregando = ref(false)
+    const aluno = ref(null)
 
-const opcoesPlano = [
-  'Básico',
-  'Premium',
-  'VIP'
-]
+    const opcoesPlano = [
+      'Básico',
+      'Premium',
+      'VIP'
+    ]
 
-const opcoesStatus = [
-  'Ativo',
-  'Inativo'
-]
+    const opcoesStatus = [
+      'Ativo',
+      'Inativo'
+    ]
 
-onMounted(async () => {
-  const id = route.params.id
-  if (id) {
-    await carregarAluno(id)
-  }
-})
+    onMounted(async () => {
+      const id = route.params.id
+      if (id) {
+        await carregarAluno(id)
+      }
+    })
 
-async function carregarAluno(id) {
-  carregando.value = true
-  try {
-    const dadosAluno = await studentsStore.buscarAlunoPorId(id)
-    if (dadosAluno) {
-      aluno.value = { ...dadosAluno }
-    } else {
-      $q.notify({
-        color: 'negative',
-        message: 'Aluno não encontrado',
-        icon: 'report_problem'
-      })
-      router.push('/app/alunos')
+    async function carregarAluno(id) {
+      carregando.value = true
+      try {
+        const dadosAluno = await alunosService.getAluno(id)
+        if (dadosAluno) {
+          aluno.value = { ...dadosAluno }
+        } else {
+          $q.notify({
+            color: 'negative',
+            message: 'Aluno não encontrado',
+            icon: 'report_problem'
+          })
+          router.push('/app/alunos')
+        }
+      } catch {
+        $q.notify({
+          color: 'negative',
+          message: 'Erro ao carregar dados do aluno',
+          icon: 'report_problem'
+        })
+        router.push('/app/alunos')
+      } finally {
+        carregando.value = false
+      }
     }
-  } catch {
-    $q.notify({
-      color: 'negative',
-      message: 'Erro ao carregar dados do aluno',
-      icon: 'report_problem'
-    })
-    router.push('/app/alunos')
-  } finally {
-    carregando.value = false
-  }
-}
 
-async function salvarAlteracoes() {
-  if (!aluno.value) return
+    async function salvarAlteracoes() {
+      if (!aluno.value) return
 
-  carregando.value = true
-  try {
-    await studentsStore.atualizarAluno(aluno.value.id, aluno.value)
+      carregando.value = true
+      try {
+        await alunosService.atualizarAluno(aluno.value.id, aluno.value)
 
-    $q.notify({
-      color: 'positive',
-      message: 'Aluno atualizado com sucesso',
-      icon: 'check'
-    })
+        $q.notify({
+          color: 'positive',
+          message: 'Aluno atualizado com sucesso',
+          icon: 'check'
+        })
 
-    router.push('/app/alunos')
-  } catch {
-    $q.notify({
-      color: 'negative',
-      message: 'Erro ao atualizar aluno',
-      icon: 'report_problem'
-    })
-  } finally {
-    carregando.value = false
+        router.push('/app/alunos')
+      } catch (error) {
+        console.error('Erro ao salvar alterações do aluno na página:', error)
+        $q.notify({
+          color: 'negative',
+          message: 'Erro ao atualizar aluno',
+          icon: 'report_problem'
+        })
+      } finally {
+        carregando.value = false
+      }
+    }
+
+    return {
+      carregando,
+      aluno,
+      opcoesPlano,
+      opcoesStatus,
+      carregarAluno,
+      salvarAlteracoes
+    }
   }
 }
 </script>

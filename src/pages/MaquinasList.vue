@@ -1,30 +1,43 @@
 <template>
   <div>
     <div class="row justify-between items-center q-mb-md">
-      <h5 class="text-h5">Lista de Alunos</h5>
+      <h5 class="text-h5">Lista de Máquinas</h5>
       <q-btn
         color="primary"
         icon="add"
-        label="Adicionar Aluno"
-        @click="$router.push('/app/alunos/adicionar')"
+        label="Adicionar Máquina"
+        @click="$router.push('/app/maquinas/adicionar')"
       />
     </div>
-      <q-input
-        v-model="filtro"
-        label="Filtrar Alunos"
-        outlined
-        clearable
-        class="q-mb-md"
-      />
+
+    <q-input
+      v-model="filtro"
+      label="Filtrar Máquinas"
+      outlined
+      clearable
+      class="q-mb-md"
+    />
+
     <q-table
-      :rows="alunos"
+      :rows="maquinas"
       :columns="colunas"
-      row-key="id"
+      row-key="id_maquina"
       :filter="filtro"
       :loading="carregando"
       :pagination="{ rowsPerPage: 10 }"
       class="q-mt-md"
     >
+      <template v-slot:body-cell-status="props">
+        <q-td :props="props">
+          <q-chip
+            :color="props.row.em_manutencao ? 'negative' : 'positive'"
+            text-color="white"
+            :label="props.row.em_manutencao ? 'Em Manutenção' : 'Disponível'"
+            size="sm"
+          />
+        </q-td>
+      </template>
+
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -33,7 +46,7 @@
             color="primary"
             icon="edit"
             size="sm"
-            @click="$router.push(`/app/alunos/editar/${props.row.id}`)"
+            @click="$router.push(`/app/maquinas/editar/${props.row.id_maquina}`)"
           >
             <q-tooltip>Editar</q-tooltip>
           </q-btn>
@@ -56,7 +69,7 @@
         <q-card-section class="row items-center">
           <q-avatar icon="delete" color="negative" text-color="white" />
           <span class="q-ml-sm">
-            Tem certeza que deseja deletar o aluno "{{ alunoParaDeletar?.nome }}"?
+            Tem certeza que deseja deletar a máquina "{{ maquinaParaDeletar?.nome_maquina }}"?
           </span>
         </q-card-section>
 
@@ -66,7 +79,7 @@
             flat
             label="Deletar"
             color="negative"
-            @click="deletarAluno"
+            @click="deletarMaquina"
             :loading="carregando"
           />
         </q-card-actions>
@@ -78,52 +91,41 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
-import alunosService from '../api/alunosService'
+import maquinasService from '../api/maquinasService'
 
 export default {
-  name: 'AlunosList',
+  name: 'MaquinasList',
   setup() {
-    const filtro = ref('')
     const $q = useQuasar()
 
-    const alunos = ref([])
+    const maquinas = ref([])
     const carregando = ref(false)
+    const erro = ref(null)
     const dialogConfirmacao = ref(false)
-    const alunoParaDeletar = ref(null)
+    const maquinaParaDeletar = ref(null)
+    const filtro = ref('')
 
     const colunas = [
       {
-        name: 'nome',
+        name: 'nome_maquina',
         required: true,
-        label: 'Nome',
+        label: 'Nome da Máquina',
         align: 'left',
-        field: 'nome',
+        field: 'nome_maquina',
         sortable: true
       },
       {
-        name: 'email',
-        label: 'Email',
+        name: 'tipo_maquina',
+        label: 'Tipo',
         align: 'left',
-        field: 'email',
+        field: 'tipo_maquina',
         sortable: true
-      },
-      {
-        name: 'telefone',
-        label: 'Telefone',
-        align: 'left',
-        field: 'telefone'
-      },
-      {
-        name: 'plano',
-        label: 'Plano',
-        align: 'left',
-        field: 'plano'
       },
       {
         name: 'status',
         label: 'Status',
-        align: 'left',
-        field: 'status'
+        align: 'center',
+        field: 'em_manutencao'
       },
       {
         name: 'actions',
@@ -133,19 +135,20 @@ export default {
     ]
 
     onMounted(async () => {
-      await carregarAlunos()
+      await carregarMaquinas()
     })
 
-    async function carregarAlunos() {
+    async function carregarMaquinas() {
       carregando.value = true
       try {
-        const response = await alunosService.getListaAlunos()
-        alunos.value = response.data
+        const response = await maquinasService.getListaMaquinas()
+        maquinas.value = response.data
       } catch (error) {
-        console.error('Erro ao carregar alunos na página:', error)
+        erro.value = 'Erro ao buscar máquinas'
+        console.error('Erro ao buscar máquinas:', error)
         $q.notify({
           color: 'negative',
-          message: 'Erro ao carregar alunos',
+          message: 'Erro ao carregar máquinas',
           icon: 'report_problem'
         })
       } finally {
@@ -153,43 +156,44 @@ export default {
       }
     }
 
-    function confirmarDelecao(aluno) {
-      alunoParaDeletar.value = aluno
+    function confirmarDelecao(maquina) {
+      maquinaParaDeletar.value = maquina
       dialogConfirmacao.value = true
     }
 
-    async function deletarAluno() {
-      if (!alunoParaDeletar.value) return
+    async function deletarMaquina() {
+      if (!maquinaParaDeletar.value) return
 
       try {
-        await alunosService.deletarAluno(alunoParaDeletar.value.id)
-        alunos.value = alunos.value.filter(aluno => aluno.id !== alunoParaDeletar.value.id)
+        await maquinasService.deletarMaquina(maquinaParaDeletar.value.id_maquina)
+        maquinas.value = maquinas.value.filter(m => m.id_maquina !== maquinaParaDeletar.value.id_maquina)
         dialogConfirmacao.value = false
-        alunoParaDeletar.value = null
+        maquinaParaDeletar.value = null
         $q.notify({
           color: 'positive',
-          message: 'Aluno deletado com sucesso',
+          message: 'Máquina deletada com sucesso',
           icon: 'check'
         })
-      } catch {
+      } catch (error) {
+        console.error('Erro ao deletar máquina:', error)
         $q.notify({
           color: 'negative',
-          message: 'Erro ao deletar aluno',
+          message: 'Erro ao deletar máquina',
           icon: 'report_problem'
         })
       }
     }
 
     return {
-      filtro,
-      alunos,
+      maquinas,
       carregando,
       dialogConfirmacao,
-      alunoParaDeletar,
+      maquinaParaDeletar,
+      filtro,
       colunas,
-      carregarAlunos,
+      carregarMaquinas,
       confirmarDelecao,
-      deletarAluno
+      deletarMaquina
     }
   }
 }

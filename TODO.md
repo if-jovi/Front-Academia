@@ -1,14 +1,14 @@
-# TODO - Implementação da Rota dos Alunos com CRUD
+# Remover ControllerAlunos e Integrar Lógica Diretamente nas Páginas
 
-## Passos a Executar
+## Passos para Remoção do Controller
 
-- [x] Modificar `src/router/routes.js` para adicionar rotas filhos sob `/app/alunos` para lista, adicionar e editar.
-- [x] Criar `src/pages/AlunosPage.vue` com `<router-view />` para conteúdo aninhado.
-- [x] Criar `src/stores/students.js` para gerenciar dados dos alunos (array de objetos com id, nome, email, etc.).
-- [x] Criar `src/pages/AlunosList.vue` com uma tabela listando alunos e botões para adicionar, editar, deletar.
-- [x] Criar `src/pages/AlunosAdd.vue` com um formulário para adicionar um novo aluno.
-- [x] Criar `src/pages/AlunosEdit.vue` com um formulário para editar um aluno existente.
-- [x] Atualizar `src/api/db.json` para incluir um array detalhado de alunos.
-- [x] Atualizar `src/api/services.js` para incluir métodos CRUD para alunos.
-- [x] Testar navegação e operações CRUD.
-- [x] Garantir que o menu esquerdo permaneça visível em todas as sub-páginas.
+- [ ] Editar AlunosList.vue: Remover import do useStudentsController, adicionar import do alunosService, gerenciar estado local (alunos, carregando, erro), substituir chamadas do store por chamadas diretas ao serviço.
+- [ ] Editar AlunosAdd.vue: Remover import do useStudentsController, adicionar import do alunosService, gerenciar estado local, substituir adicionarAluno por chamada direta ao serviço.
+- [ ] Editar AlunosEdit.vue: Remover import do useStudentsController, adicionar import do alunosService, gerenciar estado local, substituir buscarAlunoPorId e atualizarAluno por chamadas diretas ao serviço.
+- [ ] Deletar arquivo ControllerAlunos.js.
+- [ ] Testar as páginas para garantir que listagem, adição, edição e deleção funcionem corretamente.
+
+## Motivo da Mudança
+- Simplificar a arquitetura removendo uma camada intermediária (store) quando o estado não precisa ser compartilhado globalmente.
+- Cada página gerencia seu próprio estado local, chamando diretamente o alunosService.
+- Melhor para projetos pequenos onde o estado dos alunos não é usado em múltiplos componentes simultaneamente.
