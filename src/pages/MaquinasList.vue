@@ -21,7 +21,7 @@
     <q-table
       :rows="maquinas"
       :columns="colunas"
-      row-key="id_maquina"
+      row-key="id"
       :filter="filtro"
       :loading="carregando"
       :pagination="{ rowsPerPage: 10 }"
@@ -46,7 +46,7 @@
             color="primary"
             icon="edit"
             size="sm"
-            @click="$router.push(`/app/maquinas/editar/${props.row.id_maquina}`)"
+            @click="$router.push(`/app/maquinas/editar/${props.row.id}`)"
           >
             <q-tooltip>Editar</q-tooltip>
           </q-btn>
@@ -164,21 +164,35 @@ export default {
     async function deletarMaquina() {
       if (!maquinaParaDeletar.value) return
 
+      console.log('Tentando deletar máquina com ID:', maquinaParaDeletar.value.id, 'Tipo:', typeof maquinaParaDeletar.value.id)
+
       try {
-        await maquinasService.deletarMaquina(maquinaParaDeletar.value.id_maquina)
-        maquinas.value = maquinas.value.filter(m => m.id_maquina !== maquinaParaDeletar.value.id_maquina)
-        dialogConfirmacao.value = false
-        maquinaParaDeletar.value = null
-        $q.notify({
-          color: 'positive',
-          message: 'Máquina deletada com sucesso',
-          icon: 'check'
-        })
+      await maquinasService.deletarMaquina(maquinaParaDeletar.value.id)
+      maquinas.value = maquinas.value.filter(m => m.id !== maquinaParaDeletar.value.id)
+      dialogConfirmacao.value = false
+      maquinaParaDeletar.value = null
+      $q.notify({
+        color: 'positive',
+        message: 'Máquina deletada com sucesso',
+        icon: 'check'
+      })
       } catch (error) {
         console.error('Erro ao deletar máquina:', error)
+        let errorMessage = 'Erro desconhecido ao deletar máquina'
+
+        if (error.response?.status === 404) {
+          errorMessage = 'Máquina não encontrada (ID inexistente)'
+        } else if (error.response?.data?.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response?.data?.error) {
+          errorMessage = error.response.data.error
+        } else if (error.message) {
+          errorMessage = error.message
+        }
+
         $q.notify({
           color: 'negative',
-          message: 'Erro ao deletar máquina',
+          message: `Erro ao deletar máquina: ${errorMessage}`,
           icon: 'report_problem'
         })
       }

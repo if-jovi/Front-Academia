@@ -19,7 +19,10 @@ export default {
     return apiAcademia.get(`/maquinas/${id}`)
   },
   adicionarMaquina(maquina) {
-    return apiAcademia.post('/maquinas', maquina)
+    // Remove any id before sending to avoid errors
+    const data = { ...maquina };
+    delete data.id;
+    return apiAcademia.post('/maquinas', data)
   },
   atualizarMaquina(id, maquina) {
     return apiAcademia.put(`/maquinas/${id}`, maquina)

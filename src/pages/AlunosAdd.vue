@@ -142,9 +142,23 @@ export default {
         router.push('/app/alunos')
       } catch (error) {
         console.error('Erro ao salvar aluno na página:', error)
+        let errorMessage = 'Erro ao adicionar aluno'
+
+        if (error.response?.status === 400) {
+          errorMessage = 'Dados inválidos enviados'
+        } else if (error.response?.status === 409) {
+          errorMessage = 'Aluno já existe (email já cadastrado)'
+        } else if (error.response?.data?.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response?.data?.error) {
+          errorMessage = error.response.data.error
+        } else if (error.message) {
+          errorMessage = error.message
+        }
+
         $q.notify({
           color: 'negative',
-          message: 'Erro ao adicionar aluno',
+          message: errorMessage,
           icon: 'report_problem'
         })
       } finally {

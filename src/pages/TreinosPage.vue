@@ -99,46 +99,41 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
-import treinosService from '../api/treinosService'
-import alunosService from '../api/alunosService'
+import { computed, onMounted } from 'vue'
+import { useTreinosStore } from '../stores/treinosStore'
+import { useAlunosStore } from '../stores/alunosStore'
 
 export default {
   name: 'TreinosPage',
-  setup() {
-    const stats = ref({
-      totalTreinos: 0,
-      treinosHoje: 0,
-      alunosAtivos: 0,
-      mediaExercicios: 0
+  setup () {
+    const treinosStore = useTreinosStore()
+    const alunosStore = useAlunosStore()
+
+    onMounted(() => {
+      treinosStore.buscarTreinos()
+      alunosStore.buscarAlunos()
     })
 
-    onMounted(async () => {
-      await carregarEstatisticas()
-    })
+    const stats = computed(() => {
+      const totalTreinos = treinosStore.totalTreinos
+      const totalTreinosExercicios = treinosStore.totalTreinosExercicios
+      const alunosAtivos = alunosStore.alunosAtivos.length
 
-    async function carregarEstatisticas() {
-      try {
-        const [treinosRes, alunosRes] = await Promise.all([
-          treinosService.getListaTreinos(),
-          alunosService.getListaAlunos()
-        ])
+      const hoje = new Date().toISOString().split('T')[0]
+      const treinosHoje = treinosStore.treinos.filter(t => t.data_treino === hoje).length
 
-        const treinos = treinosRes.data
-        const alunos = alunosRes.data
+      // Cálculo real da média
+      const mediaExercicios = totalTreinos > 0
+        ? (totalTreinosExercicios / totalTreinos).toFixed(1)
+        : 0
 
-        stats.value.totalTreinos = treinos.length
-        stats.value.alunosAtivos = alunos.filter(a => a.status === 'Ativo').length
-
-        const hoje = new Date().toISOString().split('T')[0]
-        stats.value.treinosHoje = treinos.filter(t => t.data_treino === hoje).length
-
-        // Calcular média de exercícios por treino (simulado)
-        stats.value.mediaExercicios = Math.round(Math.random() * 5 + 3)
-      } catch (error) {
-        console.error('Erro ao carregar estatísticas:', error)
+      return {
+        totalTreinos,
+        treinosHoje,
+        alunosAtivos,
+        mediaExercicios
       }
-    }
+    })
 
     return {
       stats

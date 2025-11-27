@@ -8,7 +8,7 @@ export const useExerciciosStore = defineStore('exercicios', () => {
   const erro = ref(null)
 
   // Getters
-  const exerciciosAtivos = computed(() => exercicios.value.filter(exercicio => exercicio.status === 'Ativo'))
+  const exerciciosAtivos = computed(() => exercicios.value) // sem filtro por status pois não existe campo status
   const totalExercicios = computed(() => exercicios.value.length)
 
   // Actions

@@ -1,13 +1,7 @@
-<template>
+ <template>
   <div>
     <div class="row justify-between items-center q-mb-md">
       <h5 class="text-h5">Lista de Treinos</h5>
-      <q-btn
-        color="primary"
-        icon="add"
-        label="Adicionar Treino"
-        @click="$router.push('/app/treinos/adicionar')"
-      />
     </div>
 
     <div class="row q-gutter-md q-mb-md">
@@ -48,52 +42,39 @@
       :loading="carregando"
       :pagination="{ rowsPerPage: 10 }"
       class="q-mt-md"
-      @row-click="expandirTreino"
     >
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
             flat
             round
+            dense
+            icon="visibility"
             color="primary"
-            icon="edit"
-            size="sm"
-            @click.stop="$router.push(`/app/treinos/editar/${props.row.id_treino}`)"
+            @click="abrirDialogExercicios(props.row)"
           >
-            <q-tooltip>Editar</q-tooltip>
+            <q-tooltip>Ver Exercícios Detalhados</q-tooltip>
           </q-btn>
           <q-btn
             flat
             round
-            color="negative"
-            icon="delete"
-            size="sm"
-            @click.stop="confirmarDelecao(props.row)"
+            dense
+            icon="edit"
+            color="orange"
+            @click="$router.push(`/app/treinos/editar/${props.row.id_treino}`)"
           >
-            <q-tooltip>Deletar</q-tooltip>
+            <q-tooltip>Editar Treino</q-tooltip>
           </q-btn>
-        </q-td>
-      </template>
-
-      <template v-slot:body-cell-expand="props">
-        <q-td :props="props" colspan="100%">
-          <div class="q-pa-md">
-            <h6 class="text-h6 q-mb-md">Exercícios do Treino</h6>
-            <q-table
-              :rows="getExerciciosDoTreino(props.row.id_treino)"
-              :columns="colunasExercicios"
-              row-key="id_treino_exercicio"
-              flat
-              bordered
-              :pagination="{ rowsPerPage: 5 }"
-            >
-              <template v-slot:no-data>
-                <div class="text-grey-6 text-center q-pa-lg">
-                  Nenhum exercício encontrado para este treino
-                </div>
-              </template>
-            </q-table>
-          </div>
+          <q-btn
+            flat
+            round
+            dense
+            icon="delete"
+            color="negative"
+            @click="confirmarDelecao(props.row)"
+          >
+            <q-tooltip>Deletar Treino</q-tooltip>
+          </q-btn>
         </q-td>
       </template>
     </q-table>
@@ -119,6 +100,40 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="dialogExercicios" maximized>
+      <q-card>
+        <q-card-section>
+          <div class="row items-center">
+            <q-avatar icon="fitness_center" color="primary" text-color="white" />
+            <span class="q-ml-sm text-h6">
+              Exercícios do Treino: {{ treinoSelecionado?.nome_treino }}
+            </span>
+          </div>
+        </q-card-section>
+
+        <q-card-section>
+          <q-table
+            :rows="getExerciciosDoTreino(treinoSelecionado?.id_treino || 0)"
+            :columns="colunasExerciciosDetalhadas"
+            row-key="id_treino_exercicio"
+            flat
+            bordered
+            :pagination="{ rowsPerPage: 10 }"
+          >
+            <template v-slot:no-data>
+              <div class="text-grey-6 text-center q-pa-lg">
+                Nenhum exercício encontrado para este treino
+              </div>
+            </template>
+          </q-table>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Fechar" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -127,6 +142,8 @@ import { ref, onMounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import treinosService from '../api/treinosService'
 import alunosService from '../api/alunosService'
+import exerciciosService from '../api/exerciciosService'
+import maquinasService from '../api/maquinasService'
 
 export default {
   name: 'TreinosList',
@@ -136,10 +153,14 @@ export default {
     const treinos = ref([])
     const alunos = ref([])
     const treinosExercicios = ref([])
+    const exercicios = ref([])
+    const maquinas = ref([])
     const carregando = ref(false)
     const erro = ref(null)
     const dialogConfirmacao = ref(false)
     const treinoParaDeletar = ref(null)
+    const dialogExercicios = ref(false)
+    const treinoSelecionado = ref(null)
 
     const filtroNome = ref('')
     const filtroData = ref('')
@@ -147,7 +168,7 @@ export default {
 
     const alunosOptions = computed(() => {
       return alunos.value.map(aluno => ({
-        id_aluno: aluno.id_aluno,
+        id_aluno: aluno.id,
         nome: aluno.nome
       }))
     })
@@ -162,8 +183,9 @@ export default {
       }
 
       if (filtroData.value) {
+        const filtroAno = filtroData.value.substring(0, 4) // Extrai o ano da data selecionada
         filtrados = filtrados.filter(treino =>
-          treino.data_treino === filtroData.value
+          treino.data_treino.startsWith(filtroAno)
         )
       }
 
@@ -217,20 +239,23 @@ export default {
         name: 'actions',
         label: 'Ações',
         align: 'center'
-      },
-      {
-        name: 'expand',
-        label: '',
-        align: 'center'
       }
     ]
 
-    const colunasExercicios = [
+
+
+    const colunasExerciciosDetalhadas = [
       {
         name: 'nome_exercicio',
-        label: 'Exercício',
+        label: 'Nome do Exercício',
         align: 'left',
         field: row => getNomeExercicio(row.id_exercicio)
+      },
+      {
+        name: 'grupo_muscular',
+        label: 'Grupo Muscular',
+        align: 'left',
+        field: row => getGrupoMuscular(row.id_exercicio)
       },
       {
         name: 'series',
@@ -257,6 +282,12 @@ export default {
         align: 'center',
         field: 'descanso_segundos',
         format: val => val ? `${val}s` : '-'
+      },
+      {
+        name: 'observacoes',
+        label: 'Observações',
+        align: 'left',
+        field: 'observacoes'
       }
     ]
 
@@ -264,7 +295,9 @@ export default {
       await Promise.all([
         carregarTreinos(),
         carregarAlunos(),
-        carregarTreinosExercicios()
+        carregarTreinosExercicios(),
+        carregarExercicios(),
+        carregarMaquinas()
       ])
     })
 
@@ -305,25 +338,64 @@ export default {
       }
     }
 
+    async function carregarExercicios() {
+      try {
+        const response = await exerciciosService.getListaExercicios()
+        exercicios.value = response.data
+      } catch (error) {
+        console.error('Erro ao buscar exercícios:', error)
+      }
+    }
+
+    async function carregarMaquinas() {
+      try {
+        const response = await maquinasService.getListaMaquinas()
+        maquinas.value = response.data
+      } catch (error) {
+        console.error('Erro ao buscar máquinas:', error)
+      }
+    }
+
     function getNomeAluno(idAluno) {
-      const aluno = alunos.value.find(a => a.id_aluno === idAluno)
+      const aluno = alunos.value.find(a => a.id === idAluno)
       return aluno ? aluno.nome : 'N/A'
     }
 
     function getNomeExercicio(idExercicio) {
-      // Como não temos os exercícios carregados, vamos buscar dinamicamente
-      // Por enquanto, retorna o ID
+      const exercicio = exercicios.value.find(e => e.id === idExercicio)
+      if (exercicio) {
+        const maquina = maquinas.value.find(m => m.id === exercicio.id_maquina)
+        const nomeMaquina = maquina ? maquina.nome_maquina : 'N/A'
+        return `${nomeMaquina} - ${exercicio.grupo_muscular}`
+      }
       return `Exercício ${idExercicio}`
     }
 
+    function getGrupoMuscular(idExercicio) {
+      const exercicio = exercicios.value.find(e => e.id === idExercicio)
+      return exercicio ? exercicio.grupo_muscular : 'N/A'
+    }
 
-
-    function expandirTreino(props) {
-      props.expand = !props.expand
+    function getExerciciosDoTreino(idTreino) {
+      return treinosExercicios.value.filter(te => String(te.id_treino) === String(idTreino))
     }
 
     function filtrarPorData() {
       // A lógica de filtro já está no computed treinosFiltrados
+    }
+
+    function isValidDateOrYear(val) {
+      // Check if it's a valid year (YYYY)
+      if (/^\d{4}$/.test(val)) {
+        const year = parseInt(val, 10)
+        return year >= 1900 && year <= 2100
+      }
+      // Check if it's a valid date (YYYY-MM-DD)
+      if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+        const date = new Date(val)
+        return !isNaN(date.getTime()) && date.toISOString().startsWith(val)
+      }
+      return false
     }
 
     function confirmarDelecao(treino) {
@@ -335,13 +407,26 @@ export default {
       if (!treinoParaDeletar.value) return
 
       try {
+        // Primeiro, buscar e deletar todos os exercícios associados ao treino
+        const exerciciosResponse = await treinosService.deletarExerciciosDoTreino(treinoParaDeletar.value.id_treino)
+        const exerciciosDoTreino = exerciciosResponse.data
+
+        // Deletar cada exercício associado
+        for (const exercicio of exerciciosDoTreino) {
+          await treinosService.deletarTreinoExercicio(exercicio.id)
+        }
+
+        // Depois, deletar o treino
         await treinosService.deletarTreino(treinoParaDeletar.value.id_treino)
+
+        // Atualizar a lista local
         treinos.value = treinos.value.filter(t => t.id_treino !== treinoParaDeletar.value.id_treino)
+
         dialogConfirmacao.value = false
         treinoParaDeletar.value = null
         $q.notify({
           color: 'positive',
-          message: 'Treino deletado com sucesso',
+          message: 'Treino e exercícios associados deletados com sucesso',
           icon: 'check'
         })
       } catch (error) {
@@ -354,23 +439,32 @@ export default {
       }
     }
 
+    function abrirDialogExercicios(treino) {
+      treinoSelecionado.value = treino
+      dialogExercicios.value = true
+    }
+
     return {
       treinos,
       carregando,
       dialogConfirmacao,
       treinoParaDeletar,
+      dialogExercicios,
+      treinoSelecionado,
       filtroNome,
       filtroData,
       filtroAluno,
       alunosOptions,
       treinosFiltrados,
       colunas,
-      colunasExercicios,
+      colunasExerciciosDetalhadas,
       carregarTreinos,
       confirmarDelecao,
       deletarTreino,
-      expandirTreino,
-      filtrarPorData
+      filtrarPorData,
+      isValidDateOrYear,
+      getExerciciosDoTreino,
+      abrirDialogExercicios
     }
   }
 }

@@ -1,5 +1,5 @@
 const routes = [
- 
+
   { path: '/', component: () => import('pages/LoginPage.vue') },
 
   {
@@ -23,7 +23,8 @@ const routes = [
         children: [
           { path: '', name: 'treinos-lista', component: () => import('pages/TreinosList.vue') },
           { path: 'adicionar', name: 'treinos-adicionar', component: () => import('pages/TreinosAdd.vue') },
-          { path: 'editar/:id', name: 'treinos-editar', component: () => import('pages/TreinosEdit.vue') }
+          { path: 'editar/:id', name: 'treinos-editar', component: () => import('pages/TreinosEdit.vue') },
+          { path: ':id/exercicios', name: 'treinos-exercicios', component: () => import('pages/TreinosExercicios.vue') }
         ]
       },
       {
@@ -53,6 +54,6 @@ const routes = [
   },
 
   { path: '/:catchAll(.*)*', component: () => import('pages/ErrorNotFound.vue') }
-  ]
+]
 
-  export default routes
+export default routes

@@ -8,7 +8,7 @@ export const useMaquinasStore = defineStore('maquinas', () => {
   const erro = ref(null)
 
   // Getters
-  const maquinasAtivas = computed(() => maquinas.value.filter(maquina => maquina.status === 'Ativa'))
+  const maquinasAtivas = computed(() => maquinas.value.filter(maquina => !maquina.em_manutencao))
   const totalMaquinas = computed(() => maquinas.value.length)
 
   // Actions

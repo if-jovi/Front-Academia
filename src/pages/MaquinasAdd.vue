@@ -100,8 +100,10 @@ export default {
         const novoId = Date.now()
         const maquinaParaSalvar = {
           ...maquina,
-          id_maquina: novoId
+          id: novoId
         }
+
+        console.log('Payload a ser enviado para API:', JSON.stringify(maquinaParaSalvar, null, 2))
 
         await maquinasService.adicionarMaquina(maquinaParaSalvar)
 

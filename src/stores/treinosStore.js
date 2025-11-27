@@ -4,24 +4,31 @@ import treinosService from '../api/treinosService'
 
 export const useTreinosStore = defineStore('treinos', () => {
   const treinos = ref([])
+  const treinosExercicios = ref([]) // Novo estado
   const carregando = ref(false)
   const erro = ref(null)
 
   // Getters
-  const treinosAtivos = computed(() => treinos.value.filter(treino => treino.status === 'Ativo'))
+  const treinosAtivos = computed(() => treinos.value) // Sem filtro por status, pois treinos não têm campo status
   const totalTreinos = computed(() => treinos.value.length)
+  const totalTreinosExercicios = computed(() => treinosExercicios.value.length)
 
   // Actions
   async function buscarTreinos() {
     carregando.value = true
     erro.value = null
     try {
-      const response = await treinosService.getListaTreinos()
-      treinos.value = response.data
+      const [treinosRes, treinosExerciciosRes] = await Promise.all([
+        treinosService.getListaTreinos(),
+        treinosService.getTreinosExercicios()
+      ])
+      treinos.value = treinosRes.data
+      treinosExercicios.value = treinosExerciciosRes.data
     } catch (error) {
-      erro.value = 'Erro ao buscar treinos'
-      console.error('Erro ao buscar treinos:', error)
+      erro.value = 'Erro ao buscar dados de treinos'
+      console.error('Erro ao buscar dados de treinos:', error)
       treinos.value = []
+      treinosExercicios.value = []
     } finally {
       carregando.value = false
     }
@@ -98,10 +105,12 @@ export const useTreinosStore = defineStore('treinos', () => {
 
   return {
     treinos,
+    treinosExercicios,
     carregando,
     erro,
     treinosAtivos,
     totalTreinos,
+    totalTreinosExercicios,
     buscarTreinos,
     buscarTreinoPorId,
     adicionarTreino,

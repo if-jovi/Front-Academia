@@ -14,10 +14,17 @@
     <q-card class="q-mt-md">
       <q-card-section>
         <q-form @submit="salvarTreino" class="q-gutter-md">
+          <q-input
+            v-model="treino.nome_treino"
+            label="Nome do Treino *"
+            outlined
+            :rules="[val => val && val.length > 0 || 'Nome do treino é obrigatório']"
+          />
+
           <q-select
             v-model="treino.id_aluno"
-            :options="opcoesAlunos"
-            option-value="id_aluno"
+            :options="alunosOptions"
+            option-value="id"
             option-label="nome"
             label="Aluno *"
             outlined
@@ -27,11 +34,32 @@
           />
 
           <q-input
-            v-model="treino.nome_treino"
-            label="Nome do Treino *"
+            v-model="treino.data_treino"
+            label="Data do Treino *"
+            type="date"
             outlined
-            :rules="[val => val && val.length > 0 || 'Nome do treino é obrigatório']"
+            :rules="[val => val && val.length > 0 || 'Data do treino é obrigatória']"
           />
+
+          <div class="row q-gutter-md">
+            <q-input
+              v-model="treino.data_inicio"
+              label="Horário de Início *"
+              type="time"
+              outlined
+              class="col-6"
+              :rules="[val => val && val.length > 0 || 'Horário de início é obrigatório']"
+            />
+
+            <q-input
+              v-model="treino.data_fim"
+              label="Horário de Fim *"
+              type="time"
+              outlined
+              class="col-6"
+              :rules="[val => val && val.length > 0 || 'Horário de fim é obrigatório']"
+            />
+          </div>
 
           <q-input
             v-model="treino.observacoes"
@@ -39,30 +67,6 @@
             type="textarea"
             outlined
             rows="3"
-          />
-
-          <q-input
-            v-model="treino.data_treino"
-            label="Data do Treino *"
-            type="date"
-            outlined
-            :rules="[val => val || 'Data do treino é obrigatória']"
-          />
-
-          <q-input
-            v-model="treino.data_inicio"
-            label="Horário de Início *"
-            type="time"
-            outlined
-            :rules="[val => val || 'Horário de início é obrigatório']"
-          />
-
-          <q-input
-            v-model="treino.data_fim"
-            label="Horário de Fim *"
-            type="time"
-            outlined
-            :rules="[val => val || 'Horário de fim é obrigatório']"
           />
 
           <div class="row justify-end q-gutter-sm">
@@ -74,7 +78,7 @@
             />
             <q-btn
               type="submit"
-              label="Salvar"
+              label="Salvar Treino"
               color="primary"
               :loading="carregando"
             />
@@ -99,21 +103,21 @@ export default {
     const router = useRouter()
 
     const carregando = ref(false)
-    const opcoesAlunos = ref([])
+    const alunosOptions = ref([])
 
     const treino = reactive({
-      id_aluno: null,
       nome_treino: '',
-      observacoes: '',
+      id_aluno: null,
       data_treino: '',
       data_inicio: '',
-      data_fim: ''
+      data_fim: '',
+      observacoes: ''
     })
 
     onMounted(async () => {
       try {
         const response = await alunosService.getListaAlunos()
-        opcoesAlunos.value = response.data
+        alunosOptions.value = response.data
       } catch (error) {
         console.error('Erro ao carregar alunos:', error)
         $q.notify({
@@ -131,6 +135,7 @@ export default {
         const novoId = Date.now()
         const treinoParaSalvar = {
           ...treino,
+          id: novoId,
           id_treino: novoId
         }
 
@@ -142,12 +147,27 @@ export default {
           icon: 'check'
         })
 
-        router.push('/app/treinos')
+        // Após salvar, navegar para a tela de seleção de exercícios
+        router.push(`/app/treinos/${novoId}/exercicios`)
       } catch (error) {
         console.error('Erro ao salvar treino:', error)
+        let errorMessage = 'Erro ao adicionar treino'
+
+        if (error.response?.status === 400) {
+          errorMessage = 'Dados inválidos enviados'
+        } else if (error.response?.status === 409) {
+          errorMessage = 'Treino já existe'
+        } else if (error.response?.data?.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response?.data?.error) {
+          errorMessage = error.response.data.error
+        } else if (error.message) {
+          errorMessage = error.message
+        }
+
         $q.notify({
           color: 'negative',
-          message: 'Erro ao adicionar treino',
+          message: errorMessage,
           icon: 'report_problem'
         })
       } finally {
@@ -158,7 +178,7 @@ export default {
     return {
       carregando,
       treino,
-      opcoesAlunos,
+      alunosOptions,
       salvarTreino
     }
   }

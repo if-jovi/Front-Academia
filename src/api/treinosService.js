@@ -26,5 +26,9 @@ export default {
   },
   deletarTreino(id) {
     return apiAcademia.delete(`/treinos/${id}`)
+  },
+  // Treinos-Exercícios (para cálculo da média)
+  getTreinosExercicios() {
+    return apiAcademia.get('/treinos_exercicios')
   }
 }

@@ -130,7 +130,16 @@ export default {
       try {
         const dadosAluno = await alunosService.getAluno(id)
         if (dadosAluno) {
-          aluno.value = { ...dadosAluno }
+          // Normalizar dados: mapear snake_case para camelCase e definir padrões
+          aluno.value = {
+            id: dadosAluno.id,
+            nome: dadosAluno.nome || '',
+            email: dadosAluno.email || '',
+            telefone: dadosAluno.telefone || '',
+            dataNascimento: dadosAluno.dataNascimento || dadosAluno.data_nascimento || '',
+            plano: dadosAluno.plano || 'Básico',
+            status: dadosAluno.status || 'Ativo'
+          }
         } else {
           $q.notify({
             color: 'negative',
@@ -156,7 +165,7 @@ export default {
 
       carregando.value = true
       try {
-        await alunosService.atualizarAluno(aluno.value.id, aluno.value)
+        await alunosService.atualizarAluno(route.params.id, aluno.value)
 
         $q.notify({
           color: 'positive',

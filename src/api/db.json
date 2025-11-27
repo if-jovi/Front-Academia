@@ -1,125 +1,68 @@
 {
   "alunos": [
     {
-      "id": 1,
-      "data_inicio": "2024-01-15",
-      "objetivo": "Perda de peso e ganho de resistência",
-      "cpf_cnpj": "123.456.789-00",
-      "nome": "João Silva",
-      "endereco": "Rua das Flores, 123 - São Paulo/SP",
-      "telefone": "(11) 99999-9999",
-      "data_nascimento": "1990-05-15"
-    },
-    {
-      "id": 2,
-      "data_inicio": "2024-01-10",
-      "objetivo": "Ganho de massa muscular",
-      "cpf_cnpj": "987.654.321-00",
-      "nome": "Maria Santos",
-      "endereco": "Av. Paulista, 456 - São Paulo/SP",
-      "telefone": "(11) 88888-8888",
-      "data_nascimento": "1985-03-20"
-    },
-    {
-      "id": 3,
-      "data_inicio": "2024-02-01",
-      "objetivo": "Condicionamento físico geral",
-      "cpf_cnpj": "456.789.123-00",
-      "nome": "Pedro Oliveira",
-      "endereco": "Rua Verde, 789 - São Paulo/SP",
-      "telefone": "(11) 77777-7777",
-      "data_nascimento": "1992-08-12"
-    },
-    {
-      "id": 4,
-      "data_inicio": "2024-01-20",
-      "objetivo": "Reabilitação pós-lesão",
-      "cpf_cnpj": "321.654.987-00",
-      "nome": "Ana Costa",
-      "endereco": "Rua Azul, 321 - São Paulo/SP",
-      "telefone": "(11) 66666-6666",
-      "data_nascimento": "1988-11-25"
-    },
-    {
-      "id": 5,
-      "data_inicio": "2024-02-15",
-      "objetivo": "Preparação para competição",
-      "cpf_cnpj": "654.321.987-00",
-      "nome": "Carlos Ferreira",
-      "endereco": "Av. Brasil, 654 - São Paulo/SP",
-      "telefone": "(11) 55555-5555",
-      "data_nascimento": "1995-04-08"
-    },
-    {
       "nome": "joao vitor adwa",
       "email": "jovimart09@gmail.com",
       "telefone": "(49) 98899-4327",
-      "dataNascimento": "2004-06-05",
+      "dataNascimento": "2000-06-05",
       "plano": "Básico",
       "status": "Ativo",
-      "id": 6,
-      "dataCadastro": "2025-11-13"
+      "id": 1764114956734,
+      "dataCadastro": "2025-11-25"
+    },
+    {
+      "nome": "felipe varejeira",
+      "email": "teste@email.com",
+      "telefone": "(99) 99999-9999",
+      "dataNascimento": "2000-05-05",
+      "plano": "Básico",
+      "status": "Ativo",
+      "id": 1764277778356,
+      "dataCadastro": "2025-11-27"
     }
   ],
   "maquinas": [
     {
-      "id_maquina": 1,
-      "tipo_maquina": "Cardio",
-      "nome_maquina": "Esteira Elétrica",
-      "em_manutencao": false
-    },
-    {
-      "id_maquina": 2,
+      "id": 2,
       "tipo_maquina": "Cardio",
       "nome_maquina": "Bicicleta Ergométrica",
       "em_manutencao": false
     },
     {
-      "id_maquina": 3,
+      "id": 3,
       "tipo_maquina": "Musculação",
       "nome_maquina": "Máquina de Musculação",
       "em_manutencao": true
     },
     {
-      "id_maquina": 4,
+      "id": 4,
       "tipo_maquina": "Cardio",
       "nome_maquina": "Elíptico",
       "em_manutencao": false
     },
     {
-      "id_maquina": 5,
+      "id": 5,
       "tipo_maquina": "Musculação",
       "nome_maquina": "Leg Press",
       "em_manutencao": false
+    },
+    {
+      "nome_maquina": "Polia",
+      "tipo_maquina": "Musculação",
+      "em_manutencao": false,
+      "id": 6
     }
   ],
   "treinos": [
     {
-      "id_treino": 1,
-      "id_aluno": 1,
-      "nome_treino": "Treino de Força - Superior",
-      "observacoes": "Foco em desenvolvimento de força muscular",
-      "data_treino": "2024-01-15",
-      "data_inicio": "08:00:00",
-      "data_fim": "09:00:00"
-    },
-    {
-      "id_treino": 2,
-      "id_aluno": 2,
-      "nome_treino": "Treino Cardio",
-      "observacoes": "Melhoria da resistência cardiovascular",
-      "data_treino": "2024-01-16",
-      "data_inicio": "07:30:00",
-      "data_fim": "08:15:00"
-    },
-    {
-      "id_treino": 3,
-      "id_aluno": 1,
-      "nome_treino": "Treino de Pernas",
-      "observacoes": "Foco em membros inferiores",
-      "data_treino": "2024-01-17",
-      "data_inicio": "09:00:00",
-      "data_fim": "10:00:00"
+      "nome_treino": "inferiores",
+      "id_aluno": 1764277778356,
+      "data_treino": "2025-11-27",
+      "data_inicio": "15:00",
+      "data_fim": "16:00",
+      "observacoes": "",
+      "id": 1764279698252,
+      "id_treino": 1764279698252
     }
   ],
   "treinosDashboard": {
@@ -144,66 +87,68 @@
   },
   "exercicios": [
     {
-      "id_exercicio": 1,
+      "id": 1,
       "id_maquina": 3,
       "grupo_muscular": "Peito",
       "equipamento_necessario": "Banco de supino, barra ou halteres"
     },
     {
-      "id_exercicio": 2,
+      "id": 2,
       "id_maquina": 5,
       "grupo_muscular": "Pernas",
       "equipamento_necessario": "Máquina de leg press"
     },
     {
-      "id_exercicio": 3,
-      "id_maquina": 1,
-      "grupo_muscular": "Cardio",
-      "equipamento_necessario": "Esteira elétrica"
-    },
-    {
-      "id_exercicio": 4,
+      "id": 4,
       "id_maquina": 2,
       "grupo_muscular": "Cardio",
       "equipamento_necessario": "Bicicleta ergométrica"
+    },
+    {
+      "id_maquina": 2,
+      "grupo_muscular": "osso",
+      "equipamento_necessario": "perna",
+      "id_exercicio": 1764220620309,
+      "id": 5
+    },
+    {
+      "id_maquina": 6,
+      "grupo_muscular": "triceps",
+      "equipamento_necessario": "corda",
+      "id_exercicio": 1764277817908,
+      "id": 6
     }
   ],
   "treinos_exercicios": [
     {
-      "id_treino_exercicio": 1,
-      "id_exercicio": 1,
-      "id_treino": 1,
-      "series": 4,
-      "repeticoes": 12,
-      "carga_kg": 60,
-      "descanso_segundos": 90
-    },
-    {
-      "id_treino_exercicio": 2,
+      "id_treino": "1764279698252",
       "id_exercicio": 2,
-      "id_treino": 1,
-      "series": 3,
-      "repeticoes": 15,
-      "carga_kg": 80,
-      "descanso_segundos": 120
+      "series": "3",
+      "repeticoes": "15",
+      "carga_kg": "100",
+      "descanso_segundos": 60,
+      "id_treino_exercicio": 1764279714263,
+      "id": 1
     },
     {
-      "id_treino_exercicio": 3,
-      "id_exercicio": 3,
-      "id_treino": 2,
+      "id_treino": "1764279698252",
+      "id_exercicio": 1,
       "series": 1,
-      "repeticoes": 30,
+      "repeticoes": 1,
       "carga_kg": 0,
-      "descanso_segundos": 60
+      "descanso_segundos": 60,
+      "id_treino_exercicio": 1764279720645,
+      "id": 2
     },
     {
-      "id_treino_exercicio": 4,
-      "id_exercicio": 4,
-      "id_treino": 2,
+      "id_treino": "1764279698252",
+      "id_exercicio": 5,
       "series": 1,
-      "repeticoes": 20,
+      "repeticoes": 1,
       "carga_kg": 0,
-      "descanso_segundos": 60
+      "descanso_segundos": 60,
+      "id_treino_exercicio": 1764279724413,
+      "id": 3
     }
   ],
   "relatorios": [

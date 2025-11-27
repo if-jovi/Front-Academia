@@ -132,7 +132,7 @@ export default {
 
       carregando.value = true
       try {
-        await maquinasService.atualizarMaquina(maquina.value.id_maquina, maquina.value)
+        await maquinasService.atualizarMaquina(route.params.id, maquina.value)
 
         $q.notify({
           color: 'positive',
@@ -143,9 +143,23 @@ export default {
         router.push('/app/maquinas')
       } catch (error) {
         console.error('Erro ao salvar alterações da máquina:', error)
+        let errorMessage = 'Erro ao atualizar máquina'
+
+        if (error.response?.status === 404) {
+          errorMessage = 'Máquina não encontrada (ID inexistente)'
+        } else if (error.response?.status === 400) {
+          errorMessage = 'Dados inválidos enviados'
+        } else if (error.response?.data?.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response?.data?.error) {
+          errorMessage = error.response.data.error
+        } else if (error.message) {
+          errorMessage = error.message
+        }
+
         $q.notify({
           color: 'negative',
-          message: 'Erro ao atualizar máquina',
+          message: errorMessage,
           icon: 'report_problem'
         })
       } finally {

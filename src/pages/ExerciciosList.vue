@@ -84,33 +84,26 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
-import exerciciosService from '../api/exerciciosService'
-import maquinasService from '../api/maquinasService'
+import { useExerciciosStore } from '../stores/exerciciosStore'
+import maquinasService from '../api/maquinasService' // Mantemos para carregar as máquinas
 
 export default {
   name: 'ExerciciosList',
-  setup() {
+  setup () {
     const $q = useQuasar()
+    const exerciciosStore = useExerciciosStore()
 
-    const exercicios = ref([])
     const maquinas = ref([])
-    const carregando = ref(false)
-    const erro = ref(null)
     const dialogConfirmacao = ref(false)
     const exercicioParaDeletar = ref(null)
     const filtro = ref('')
 
+    const exercicios = computed(() => exerciciosStore.exercicios)
+    const carregando = computed(() => exerciciosStore.carregando)
+
     const colunas = [
-      {
-        name: 'id_exercicio',
-        required: true,
-        label: 'ID',
-        align: 'left',
-        field: 'id_exercicio',
-        sortable: true
-      },
       {
         name: 'nome_maquina',
         label: 'Máquina',
@@ -139,56 +132,40 @@ export default {
 
     onMounted(async () => {
       await Promise.all([
-        carregarExercicios(),
+        exerciciosStore.buscarExercicios(),
         carregarMaquinas()
       ])
     })
 
-    async function carregarExercicios() {
-      carregando.value = true
-      try {
-        const response = await exerciciosService.getListaExercicios()
-        exercicios.value = response.data
-      } catch (error) {
-        erro.value = 'Erro ao buscar exercícios'
-        console.error('Erro ao buscar exercícios:', error)
-        $q.notify({
-          color: 'negative',
-          message: 'Erro ao carregar exercícios',
-          icon: 'report_problem'
-        })
-      } finally {
-        carregando.value = false
-      }
-    }
-
-    async function carregarMaquinas() {
+    async function carregarMaquinas () {
       try {
         const response = await maquinasService.getListaMaquinas()
         maquinas.value = response.data
       } catch (error) {
         console.error('Erro ao buscar máquinas:', error)
+        $q.notify({
+          color: 'negative',
+          message: 'Erro ao carregar a lista de máquinas.',
+          icon: 'report_problem'
+        })
       }
     }
 
-
-
-    function confirmarDelecao(exercicio) {
+    function confirmarDelecao (exercicio) {
       exercicioParaDeletar.value = exercicio
       dialogConfirmacao.value = true
     }
 
-    function getNomeMaquina(idMaquina) {
-      const maquina = maquinas.value.find(m => m.id_maquina === idMaquina)
+    function getNomeMaquina (idMaquina) {
+      const maquina = maquinas.value.find(m => m.id === idMaquina)
       return maquina ? maquina.nome_maquina : 'N/A'
     }
 
-    async function deletarExercicio() {
+    async function deletarExercicio () {
       if (!exercicioParaDeletar.value) return
 
       try {
-        await exerciciosService.deletarExercicio(exercicioParaDeletar.value.id_exercicio)
-        exercicios.value = exercicios.value.filter(e => e.id_exercicio !== exercicioParaDeletar.value.id_exercicio)
+        await exerciciosStore.deletarExercicio(exercicioParaDeletar.value.id)
         dialogConfirmacao.value = false
         exercicioParaDeletar.value = null
         $q.notify({
@@ -200,7 +177,7 @@ export default {
         console.error('Erro ao deletar exercício:', error)
         $q.notify({
           color: 'negative',
-          message: 'Erro ao deletar exercício',
+          message: exerciciosStore.erro || 'Erro ao deletar exercício',
           icon: 'report_problem'
         })
       }
@@ -213,7 +190,6 @@ export default {
       exercicioParaDeletar,
       filtro,
       colunas,
-      carregarExercicios,
       confirmarDelecao,
       deletarExercicio,
       getNomeMaquina

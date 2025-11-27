@@ -17,7 +17,7 @@
           <q-select
             v-model="exercicio.id_maquina"
             :options="opcoesMaquinas"
-            option-value="id_maquina"
+            option-value="id"
             option-label="nome_maquina"
             label="Máquina *"
             outlined
@@ -116,9 +116,23 @@ export default {
         router.push('/app/exercicios')
       } catch (error) {
         console.error('Erro ao salvar exercício:', error)
+        let errorMessage = 'Erro ao adicionar exercício'
+
+        if (error.response?.status === 400) {
+          errorMessage = 'Dados inválidos enviados'
+        } else if (error.response?.status === 409) {
+          errorMessage = 'Exercício já existe'
+        } else if (error.response?.data?.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response?.data?.error) {
+          errorMessage = error.response.data.error
+        } else if (error.message) {
+          errorMessage = error.message
+        }
+
         $q.notify({
           color: 'negative',
-          message: 'Erro ao adicionar exercício',
+          message: errorMessage,
           icon: 'report_problem'
         })
       } finally {
